@@ -26,6 +26,10 @@ class ClazzBuilder(private val clazz: TypeSpec.Builder) {
         clazz.primaryConstructor(FunctionBuilder(FunSpec.constructorBuilder()).apply(block).build())
     }
 
+    fun annotation(type: KClass<*>, block: AnnotationSpec.Builder.() -> Unit) {
+        clazz.addAnnotation(AnnotationSpec.builder(type.asClassName()).apply(block).build())
+    }
+
     fun property(name: String, type: KClass<*>, block: PropertySpec.Builder.() -> Unit = {}) {
         clazz.addProperty(PropertySpec.builder(name, type).apply(block).build())
     }
@@ -66,10 +70,10 @@ fun kotlinFile(packageName: String, fileName: String, block: (@KotlinPoetDsl Fil
     return FileBuilder(packageName, fileName).apply(block).build()
 }
 
-fun kotlinClass(name: String, block: ClazzBuilder.() -> Unit) : TypeSpec {
+fun kotlinClass(name: String, block: (@KotlinPoetDsl ClazzBuilder).() -> Unit) : TypeSpec {
     return ClazzBuilder(TypeSpec.classBuilder(name)).apply(block).build()
 }
 
-fun kotlinFunction(name: String, block: FunctionBuilder.() -> Unit) : FunSpec {
+fun kotlinFunction(name: String, block: (@KotlinPoetDsl FunctionBuilder).() -> Unit) : FunSpec {
     return FunctionBuilder(FunSpec.builder(name)).apply(block).build()
 }
